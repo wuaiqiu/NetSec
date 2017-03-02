@@ -1,0 +1,56 @@
+						hydra
+
+
+1.简介
+
+
+	THC-HYDRA是一个支持多种网络服务的非常快速的网络登陆破解工具。这款暴力密码破解工具相当强大，
+	
+支持几乎所有协议的在线密码破解，它是一个验证性质的工具，它被设计的主要目的是为研究人员和安全
+
+从业人员展示远程获取一个系统的认证权限是比较容易的！
+
+	下载地址:http://www.thc.org/thc-hydra
+
+
+	
+2.依赖包
+
+	openssl-devel 
+	pcre-devel 
+	ncpfs-devel 		()
+	postgresql-devel 
+	libssh-devel 		(https://red.libssh.org/projects/libssh/files)
+	subversion-devel 	
+	libncurses-devel	()
+
+
+	
+3.语法
+
+	hydra   [options]	IP  ServiceName
+			
+				-L <FILE>   	指定用户名字典
+				-P <FILE>		指定密码字典
+				-C <FILE>		指定用户:密码文件
+				-t <TASKS>		同时运行的线程数，默认为16
+				-v / -V			显示详细过程
+				-o <FILE>		指定结果输出文件
+				-l <LOGIN>		指定破解的用户，对特定用户破解
+				-f				找到第一对登录名或者密码的时候中止破解
+				-s <PORT>		可通过这个参数指定非默认端口
+				-e [n|s]		可选选项，n：空密码试探，s：使用指定用户和密码试探
+				
+				
+4.支持的server
+
+	AFP, Cisco AAA, Cisco auth, Cisco enable, CVS, Firebird, FTP, FTPS,
+	HTTP-FORM-GET, HTTP-FORM-POST, HTTP-GET, HTTP-HEAD, HTTP-PROXY,
+    HTTP-PROXY-URLENUM, ICQ, IMAP, IRC, LDAP2, LDAP3, MS-SQL, MYSQL, NCP, NNTP,
+    Oracle, Oracle-Listener, Oracle-SID, PC-Anywhere, PCNFS, POP3, POSTGRES,
+    RDP, REXEC, RLOGIN, RSH, SAP/R3, SIP, SMB, SMTP, SMTP-Enum, SNMP,
+    SOCKS5, SSH(v1 and v2), SSHKEY, Subversion, Teamspeak (TS2), Telnet,
+    VMware-Auth, VNC and XMPP.
+		
+
+	
