@@ -1,0 +1,48 @@
+						crunch
+						
+
+1.简介
+
+	crunch是一款运行在linux中的字典生成工具，可以灵活的定制自己的密码字
+	
+典文件。
+
+	下载地址:https://sourceforge.net/projects/crunch-wordlist/
+	
+	
+	
+2.charset.lst文件
+
+	定义了一些名词用于简写用于制作字典的字符
+	
+		numeric 		表示0123456789
+		
+		numeric-space 	表示数字与空格
+
+		lalpha			表示26位小写字母
+
+		ualpha			表示26为大写字母
+		
+		symbols-all-space 常见字符与空格
+		
+		mixalpha-numeric-all-space包含最常见的元素组合(即大小写字母+数字+常见符号)
+
+		
+3.语法
+
+	crunch  min-len(最小长度字符串)	max-len(最大长度字符串)	 charset(指定字符集,默认小写字母)
+	
+				-f file 	调用字符集文件(charset.lst)
+				-o file		输出文件
+				-t FORMAT	指定密码格式
+							('@':表示小写字母,',':代表大写字母,'%':代表数字,'^':代表符号)
+				-s passwd	指定输出的密码的开始
+				-e  passwd  定义停止生成密码 ，比如-e 222222：到222222停止生成密码
+				
+				-c n    	指定每个文件的密码个数(用于分割)
+				-b #[M|B]	指定每个文件的分割大小
+				-d	n 		指定至少出现元素种类，比如-d 3@：每个密码至少出现三种字母
+				-p abc		指定abc随机组合;常写在最后,多个用空格分割
+				
+	
+		
