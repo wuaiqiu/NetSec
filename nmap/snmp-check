@@ -1,0 +1,33 @@
+								snmp-check
+								
+								
+1.简介
+
+	snmp-check允许您枚举SNMP设备，并以非常人性化的友好格式输出。它可用于渗透测试或系统监控。
+	
+	
+2.命令
+
+	
+	-t : 目标主机
+	-p : SNMP 端口; default port is 161;
+    -c : SNMP community; default is public;
+    -v : SNMP version (1,2); default is 1;
+	
+	
+=============================================================================
+
+	System information					#获取系统信息	
+	Device	information 				#设备信息
+	Storage information					#外存信息
+	User accounts						#用户账户信息
+	Processes							#进程信息
+	Network information					#网络信息
+	Network interfaces					#网络接口信息
+	Routing information					#路由信息
+	Network services					#网络服务信息
+	Listening TCP ports and connetcions #监听的TCP端口
+	Listening DUP ports					#监听UDP端口
+	Software component					#软件组件信息
+	Web server information				#web服务信息
+	

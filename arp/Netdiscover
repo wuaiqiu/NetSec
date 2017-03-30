@@ -1,0 +1,19 @@
+								Netdiscover
+								
+								
+1.简介
+
+	Netdiscover是一个主动/被动的ARP侦查工具,这工具在使用DHCP的无线网络上非常有用,Netdiscover可以
+	
+检查在线主机或搜索为他们发送的ARP请求
+	
+	
+2.命令
+
+		
+		-i device 							#指定网络设备接口
+		-r range 							#指定扫描网络范围
+		-p									#使用被动模式,只接受ARP,不发送任何数据
+		-s time								#每个ARP请求之间的时间间隔
+		-c count							#ARP请求的次数
+		-f									#使用主动模式,发送ARP请求

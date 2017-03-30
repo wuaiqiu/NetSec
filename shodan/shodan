@@ -1,0 +1,103 @@
+							shodan
+							
+							
+1.简介
+
+	  Shodan 是一个搜索引擎，但它与 Google 这种搜索网址的搜索引擎不同，Shodan 是用来搜索网络
+	    
+空间中在线设备的，你可以通过 Shodan 搜索指定的设备，或者搜索特定类型的设备
+
+
+
+2.使用搜索过滤
+
+
+			hostname：搜索指定的主机或域名，例如 hostname:"google"
+			port：搜索指定的端口或服务，例如 port:"21"
+			country：搜索指定的国家，例如 country:"CN"
+			city：搜索指定的城市，例如 city:"Hefei"
+			org：搜索指定的组织或公司，例如 org:"google"
+			isp：搜索指定的ISP供应商，例如 isp:"China Telecom"
+			product：搜索指定的操作系统/软件/平台，例如 product:"Apache httpd"
+			version：搜索指定的软件版本，例如 version:"1.6.2"
+			geo：搜索指定的地理位置，参数为经纬度，例如 geo:"31.8639, 117.2808"
+			before/after：搜索指定收录时间前后的数据，格式为dd-mm-yy，例如 before:"11-11-15"
+			net：搜索指定的IP地址或子网，例如 net:"210.45.240.0/24"
+			
+			
+3.命令工具Shodan
+
+
+==============================安装===========================================
+
+		#git clone https://github.com/achillean/shodan-python.git 
+		
+		#cd shodan-python
+		
+		#python setup.py install
+		
+===============================================================================
+
+
+
+		
+		(1)init		初始化命令行工具。
+			
+			#shodan init [API_Key]
+			
+
+
+			
+		(2)count		返回查询的结果数量。
+			
+			#shodan count microsoft iis 6.0
+			
+
+
+			
+		(3)download		将搜索结果下载到一个文件中，文件中的每一行都是 JSON 格式存储的目标banner信息。
+		
+		默认情况下，该命令只会下载1000条结果，如果想下载更多结果需要增加--limit 参数。
+			
+			#shodan dowload resultsfile microsoft iis 6.0
+			
+
+
+			
+		(4)parse		我们可以使用 parse 来解析之前下载数据，它可以帮助我们过滤出自己感兴趣的内容，
+		
+		也可以用来将下载的数据格式从 JSON 转换成 CSV 等等其他格式，当然更可以用作传递给其他处理
+		
+		脚本的管道。
+		
+			#shodan parse --fields ip_str,port,org --separator , microsoft-data.json.gz
+				
+				将上面下载的数据以CSV格式输出IP地址、端口号和组织名称
+
+
+
+				
+				
+		(5)host		查看指定主机的相关信息，如地理位置信息，开放端口，甚至是否存在某些漏洞等信息
+		
+			#shodan host 182.190.0.12
+			
+		
+
+
+
+		
+		(6)search		直接将查询结果展示在命令行中，默认情况下只显示IP、端口号、主机名和HTTP数据。
+		
+		当然我们也可以通过使用 –-fields 来自定义显示内容
+		
+			#shodan search --fields ip_str,port,org,hostnames microsoft iis 6.0
+			
+				只显示IP、端口号、组织名称和主机名
+
+
+
+				
+		  (7)myip        输出用户当前公网IP
+		  
+			#shodan myip 
