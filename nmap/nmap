@@ -279,3 +279,34 @@ idle scan或匿名代理（如TOR）等网络技术。
 		
 
 	
+===============================================================================================
+
+	发现地理位置
+	
+	(1)下载MaxMind的城市数据库http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz。
+	解压到本地的NMAP数据文件夹($Nmap_DATA/nselib/data/)。
+	(2)nmap --script ip-geolocation-maxmind <target> 
+		
+		
+	获得WHOIS记录信息
+	(1)nmap --script whois-ip --script-args whois.whodb=nofollow <目标> 
+	
+	暴力破解DNS记录
+	(1)nmap --script dns-brute baidu.com
+	
+	HTTP方法
+	(1)  nmap  --script http-methods  --script-args http-methods.retest scanme.nmap.org 
+	
+	扫描HTTP代理
+	(1)nmap --script http-open-proxy -p8080 <target>
+	
+	发现有趣的文件和目录和管理员账户
+	(1)nmap --script http-enum -p80 <target>
+	
+	暴力破解HTTP身份认证
+	(1)nmap -p80 --script http-brute --script-args http-brute.path=/admin/, 
+	userdb=/var/usernames.txt,passdb=/var/passwords.txt <target>
+	
+	
+	
+	
