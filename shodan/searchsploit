@@ -1,0 +1,38 @@
+										 searchsploit
+										 
+							
+1.简介
+
+	searchsploit用来管理,查询exploit-db数据库的
+	
+2.命令
+
+	searchsploit [options] term...
+	
+		-c  				#区分大小写(默认不区分)
+		-u  				#更新
+		-t  				#指定匹配exploit title
+		--nmap [file.xml]	#检查nmap的扫描漏洞
+		-p [EDB-ID]			#显示指定exploit并复制到粘贴板
+		-m [EDB-ID...]		#复制指定的exploit到此目录下
+		-w					#在线查询
+		
+		
+3.举例
+
+--------------------更新-------------------------------
+
+	searchsploit -u
+	
+	
+----------------查询-------------------------------
+
+	searchsploit afd windows local			#基本查询
+	
+	searchsploit -t oracle windows			#头查询
+	
+	searchsploit -p 39446					#查询并复制路径
+
+	searchsploit -m 39446 39525				#复制至目录
+	
+	searchsploit WarFTP 1.65 -w				#在线查询
