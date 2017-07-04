@@ -1,0 +1,89 @@
+									tshark
+									
+								
+1.命令
+	
+	(1)捕获接口:
+　　	
+		-D: 打印接口的列表;
+		-i: -i <interface>指定捕获接口，默认是第一个非本地循环接口;
+　　	-f: -f <capture filter>设置抓包过滤表达式
+　　	-s: -s <snaplen> 设置每个抓包的大小，因为网络中传输有65535的限制，值0代表快照长度65535，
+		默认也是这个值；
+	　　-p: 以非混合模式工作，即只关心和本机有关的流量。
+		-I:	以监听模式工作
+	　　-L 列出本机支持的数据链路层协议，供-y参数使用。
+		-y: -y<link type> 设置抓包的数据链路层协议，不设置则默认为-L找到的第一个协议，局域网一般
+		是EN10MB等;
+	　
+	
+	(2)捕获停止选项:
+	　　
+		-c: -c <packet count> 捕获n个包之后结束，默认捕获无限个;
+　　	-a: -a <autostop cond.> ...  duration:NUM，在num秒之后停止捕获;
+　　　　　　　　　　　　　　　　　　 filesize:NUM，在numKB之后停止捕获;
+　　　　　　　　　　　　　　　　　   files:NUM，在捕获num个文件之后停止捕获;
+
+
+	(3)捕获输出选项:
+	
+　　	-b <ringbuffer opt.> ...设置ringbuffer文件参数,ringbuffer的文件名由-w参数决定
+　　　　　　　　　　　　　　　　 duration:NUM - 在NUM秒之后写下一个ringbuffer文件;
+　　　　　　　　　　　　　　　　 filesize:NUM - 在NUM KB之后写下一个ringbuffer文件;
+　　　　　　　　　　　　　　　　 files:NUM - 将所有的ringbuffer文件合成使用NUM个
+
+	
+	(4)输入文件:
+　　	-r: -r <infile> 设置读取本地文件
+
+
+	(5)处理选项:
+	　　-R: -R <read filter>,包的读取（显示）过滤器同时需要-2选项
+		-T: -T pdml|ps|text|fields|psml,设置解码结果输出的格式，包括text,ps,psml和pdml，默认为text
+	　　-e: 如果-T fields选项指定，-e用来指定输出哪些字段;
+	　		-e frame.number：显示帧序号
+　　		-e frame.time: 显示时间，时间格式为 Sep 21, 2016 17:20:02.233249000 中国标准时间 
+　　		-e frame.protocols: 显示此数据包使用的协议
+			-e frame.len：显示此数据包的长度
+　　		-e ip.src: 显示源ip，但是不能跟frame一起用
+　　		-e ip.dst: 显示目的ip地址；
+			-e ip.flags:显示ip的标志位
+　			-e tcp.port: 显示端口号。
+　　	-n: 禁止所有地址名字解析（默认为允许所有）
+	　　-N: 启用某一层的地址名字解析。“m”代表MAC层，“n”代表网络层，“t”代表传输层，“C”代表当前异步
+
+	(6)输出选项:
+　　	-w: -w <outfile|-> 设置raw数据的输出文件。这个参数不设置，tshark将会把解码结果输出到stdout
+	　　-F: -F <output file type>,设置输出的文件格式，默认是.pcapng,使用tshark -F可列出所有支持的输出
+		文件类型。
+	　　-V: 增加细节输出;
+　　	-O: -O <protocols>,只显示此选项指定的协议的详细信息。
+	　　-S: -S <separator> 行分割符
+　　	-t: -t a|ad|d|dd|e|r|u|ud 设置解码结果的时间格式。“ad”表示带日期的绝对时间，“a”表示不带日期
+		的绝对时间，“r”表示从第一个包到现在的相对时间，“d”表示两个相邻包之间的增量时间（delta）。
+　　	-u: s|hms 格式化输出秒；
+　　	-l: 在输出每个包之后flush标准输出
+　　
+	(9)其他选项:
+	　　-h: 显示命令行帮助；
+　　	-v: 显示tshark 的版本信息;
+
+
+
+
+2.libpcap  filter语法：
+
+   type   【host主机名】,【net ip地址】,【port端口号】,【portrange端口范围】  
+		   `host  alarm',  `net  192.168.0.200'(192.168.0),  `port20', 
+		   `portrange 6000-6008'.  默认为host
+
+diretction 【src】,【dst】,【src or dst】,【src and dst】
+		   `src alarm', `dst net 192.168.0.200', `src or dst port ftp-data'. 
+		   默认为src or dst
+		  
+
+protocol  【ip】,【ip6】,【arp】,【rarp】,【tcp and udp】.  
+		  `arp net 192.168.0.200', `tcp  port  21',  `udp  portrange  7000-7009',  
+		  
+
+		   
