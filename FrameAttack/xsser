@@ -32,6 +32,9 @@
 		*从URL简单的注射,使用GET和如果存在任何漏洞,发起DoS，Doss（攻击服务器）:
 		xsser -u "http://host.com"  --Dos（攻击浏览器）
 
+		*指定攻击Dom,Coo,Xsa,Xsr,Dcp,Ind,Anchor
+		xsser -u http://172.16.2.130/mutillidae/index.php?page=dns-lookup.php --Dom
+
 
 		
 
