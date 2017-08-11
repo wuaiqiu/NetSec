@@ -1,0 +1,30 @@
+			john the ripper
+
+一.使用john破解Linux密码
+
+	(1)unshadow命令基本上会结合/etc/passwd的数据和/etc/shadow的数据
+		
+		unshadow /etc/passwd /etc/shadow >passwd.txt
+
+	(2)john命令执行破解
+	 
+		john passwd.txt   #执行流程如下
+	
+	a.消灭FOOL USER
+		
+		john --single passwd.txt
+
+	b.消灭稍微聪明一点的用户
+	
+		john --wordlist=/usr/share/john/password.lst passwd.txt	
+
+			--wordlist=/path/file   #指定密码文件，默认/usr/share/john/password.lst
+			
+			--rules    		#进行大小写变换
+
+	c.进行大屠杀
+		
+		john --incremental=all passwd.txt    #耗时
+
+		
+		--show passwd.txt       #显示破解的密码
