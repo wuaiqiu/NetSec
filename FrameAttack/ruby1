@@ -25,7 +25,7 @@
 		    多行字符串。
 		EOF
 	 ====================================================
-		print <<`EOF`                 # 执行命令
+		print <<`EOF`                 # 执行命令,是esc下的" ` "
 		    echo hi there
 		    echo lo there
 		EOF
