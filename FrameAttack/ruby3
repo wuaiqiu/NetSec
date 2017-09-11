@@ -1,0 +1,97 @@
+					ruby元编程
+
+
+1.动态方法
+
+	静态语言，在编译阶段，编译器都会检查方法调用的对象是否有一个这样的方法，如果没有就直接报错
+
+	动态语言，只有真正调用这个方法的时候，找不到这个方法才会报错错误，
+
+	(1)动态调用方法
+	
+	在Ruby中通过Object#send方法可以代替点标识调用对象的指定实例方法
+
+	================================================================
+		class MyClass
+	    		def my_method(my_arg)
+        			my_arg * 2
+    			end
+		end
+
+		obj = MyClass.new
+		obj.my_method(3)    #=> 6
+		obj.send(:my_method, 3) #=> 6
+	
+	上面代码通过直接调用和使用send方法调用得到的结果是一样的
+	通过Object#send不仅可以调用公共方法，也可以调用对象的私有方法。
+	如果想保留对象的封装特性，不向外暴露私有方法可以使用Object#public_send方法。
+	================================================================	
+
+	（2）动态定义方法
+	
+	通过Module#define_method方法和代码块提供了动态方法定义方式
+	
+	================================================================
+		class MyClass
+    			define_method :my_method do |my_arg|
+       				puts my_arg * 3
+			 end
+		end
+
+		obj = MyClass.new
+		obj.my_method(2)  #=> 6
+		
+	
+	================================================================
+	
+	(3)method_missing方法
+	
+	method_missing利用的机制是，当一个对象进行某个方法调用的时候，会到其对应的类的实例方法中进行查找，
+	如果没有找到，则顺着祖先链向上查找，直到找到BasicObject类为止。如果都没有则会最终调用一个
+	BasicObject#method_missing抛出NoMethodError异常。
+
+	===================================================================
+		class SendClass  
+  			def method_missing(name, *argc)  
+    				if [:one_name, :two_name, :three_name].include?(name)  
+      					name  
+    				else 	#处理不了的方法就让父类处理  
+      					super  
+    				end  
+  			end  
+		end  
+  
+		s = SendClass.new  
+  
+		puts s.one_name    #one_name  
+		puts s.four_name   #undefined method `four_name'  
+
+	===================================================================
+
+	(4)删除方法
+
+	====================================================================
+		class A
+  			def fun1
+      				puts "ok"
+  			end
+		end
+
+		class B<A
+		    def fun1
+      			puts "ok1"
+    		    end
+    			
+		    remove_method :fun1
+		end
+
+		B.new.fun1
+		>ok
+		
+	undef_method会删除所有(包括继承而来的)方法。而remove_method只删除接受者自己的方法，而保留继承来的方法。
+	==================================================================
+
+
+
+
+
