@@ -96,29 +96,6 @@
 		
 漏洞公告
 
-	inurl:"/wp-admin/setup-config.php" intitle:"Setup Configuration File"		：未完成安装的wordpress
-
 	inurl:".php?cat=" inurl:"'"							：sql注入
 
-	intext:"Forum software by XenForo™"						：sql注入
-
-	ext:php inurl:"api.php?action="							：sql注入
-
-	inurl:/index.php?option=com_artforms						：sql注入
-
-	"index of" bigdump.php								：sql注入
-
-	"powered by joomla 3.2" OR "powered by joomla 3.3" OR "powered by joomla 3.4"	：sql注入
-
 	inurl:"/admin/index.php?msg=" inurl:"%20"					：xss
-
-	inurl:sendmessage.php?type=skype						：xss
-
-	allinurl:"/wp-content/plugins/wp-noexternallinks"				：xss
-
-	intext:"Hello visitor from" ext:asp						：xss
-
-	inurl:".asp?strParents="							：xss
-
-
-
