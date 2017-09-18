@@ -281,6 +281,9 @@
 		puts C.ancestors
 
 		>[C,A,B,Object,Kernel,BasicObject]
+	
+	==================================================================
+	类对象   class=> [Class, Module, Object, Kernel, BasicObject]
 	==================================================================
 	
 二.语句

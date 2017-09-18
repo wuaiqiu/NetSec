@@ -123,7 +123,7 @@
 	Module.new代替module
 	======================================================================
 	
-	(2)instance_eval{代码块}
+	(2)BasicObject#instance_eval{代码块}
 		
 		可以访问到调用者对象中的变量（实例变量）
 
@@ -143,7 +143,7 @@
 	=======================================================================
 
 
-	（3）instance_exec(参数){|参数列表| }
+	（3）BasicObject#instance_exec(参数){|参数列表| }
 		与instance_eval一样
 
 	=====================================================================
@@ -275,7 +275,7 @@
 	==========================================================
 
 
-5.instance_eval 与 class_eval
+5.BasicObject#instance_eval 与 Module#class_eval
 
 	instance_eval必须由实例来调用
 	class_eval必须由类来调用
@@ -329,7 +329,8 @@
 	Ruby允许给单个对象增加方法,这种只针对单个对象生效的方法，称为单件方法
 	
 	定义方式
-
+	Object#define_singleton_method
+	Object#singleton_methods 
 	===========================================================
 	class A
 	end
@@ -367,12 +368,14 @@
 	-----------------------------------------------------
 	class MyClass
     		class << self
-        		def yet_another_class_method; end
+        		def yet_another_class_method
+			end
     		end
 	end
 	----------------------------------------------------
 
 	（1）打开单件类(获取单件类)
+	Object#singleton_class
 	=========================================================
 	class A
 	end
@@ -419,7 +422,7 @@
 	   extend A
 	end
 	
-	A.fun()
+	B.fun()
 	============================================================
 
 	（2）对象扩展
