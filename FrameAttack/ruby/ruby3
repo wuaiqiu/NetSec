@@ -374,7 +374,7 @@
 	end
 	----------------------------------------------------
 
-	（1）打开单件类(获取单件类)
+	（1）获取单件类
 	Object#singleton_class
 	=========================================================
 	class A
@@ -451,7 +451,7 @@
 
 	(1)方法别名
 
-	Ruby中使用Module#alias_method(:newName,:oldName)方法和alias(:newName,:oldName)关键字为方法取别名。
+	Ruby中使用Module#alias_method(:newName,:oldName)方法和alias(:newName :oldName)关键字为方法取别名。
 	============================================================
 	class A
 	  def fun
@@ -465,7 +465,8 @@
 	obj.fun #=>this is fun
 	obj.fun1#=>this is fun
 	
-	在顶级作用域中（main）中只能使用alias关键字来命名别名，因为在那里调用不到Module#alias_method方法
+	在顶级作用域中（main【Object, Kernel, BasicObject】）中只能使用alias关键字来命名别名，因为在那里调用不到Module#alias_method方法
+	注意:在alias出现循环时，只看第一条alias语句
 	============================================================
 
 	
@@ -476,3 +477,178 @@
 		c.在新的方法中调用老的方法
 
 
+	=========================================================================
+	class A
+		def fun
+		  puts "this is origin function"
+		end
+		private :fun
+
+		def fun2		#b.重定义这个方法
+		  puts "this is head"
+		  fun1			#c.在新的方法中调用老的方法
+		  puts "this is footer"	
+		end
+		
+		alias :fun1 :fun	#a.给方法定义一个别名
+		alias :fun :fun2
+	end
+	
+	A.new.fun
+	==========================================================================
+	
+	(3)细化(refine)
+	
+	细化的作用范围是文件末尾，而环绕别名则是作用在全局
+
+	==========================================================================
+	module StringRefinement
+  		refine String do
+    			def length
+      				super > 5 ? 'long' : 'short'
+    			end
+  		end	
+	end
+
+	puts "War and Peace".length #=>13
+
+	using StringRefinement
+
+	puts "War and Peace".length  #=> “long”
+	==========================================================================
+
+	(4)下包含包装器 (Module#prepend)
+
+	prepend是插入到下方，而下方的位置，正好是方法查找时优先查找的位置，利用这一优势，可以覆写当前类的同名方法
+
+	=========================================================================
+	module ExplicitString
+    		def length
+        		super > 5 ? ‘long’ : ‘short’
+    		end
+	end
+
+	String.class_eval do
+		prepend ExplicitString
+	end
+
+	puts "War and Peace".length  #=> “long”
+	==========================================================================
+
+10.Kernal#eval方法
+
+	(1)与BasicObject#instance_eval和Module#class_eval相比Kernal#eval更加直接，不需要代码块、直接就可以
+执行字符串代码(String of Code)。
+
+	BasicObject#instance_eval也是可以执行字符串代码的。
+
+	============================================================================
+	eval "puts 'ok'"	  #ok
+	instance_eval "puts 'ok'" #ok
+	============================================================================
+
+	(2)绑定对象
+	Binding是一个完整作用域对象，通过eval方法在这个Binding对象所携带的作用域内执行代码
+
+	=========================================================================
+	class MyClass
+	    def my_method
+        	@x = 1
+        	binding
+    	    end
+	end
+
+	b = MyClass.new.my_method
+	eval "puts @x", b #=> 1
+	========================================================================
+
+	(3)TOPLEVEL_BINDING的预定义常量,表示顶级作用域Binding对象
+	
+	========================================================================
+	class A
+	  def fun
+      	      eval "puts a",TOPLEVEL_BINDING
+  	  end
+	end
+
+	a=3
+	A.new.fun 	#=>3
+	========================================================================
+	
+
+11.钩子方法
+
+	钩子方法有些类似事件驱动装置，可以在特定的事件发生后执行特定的回调函数，这个回调函数就是钩子方法
+
+	(1)Class#inherited
+		当一个类被继承时，Ruby会调用该方法
+	==========================================================================
+	class A
+  	  def self.inherited(arg1)
+      	  	puts "A被#{arg1}继承"
+  	  end
+	end
+
+	class B <A
+	end
+	#=>A被B继承
+	===========================================================================
+	
+	(2)Module#included(Module#prepended)
+	===========================================================================
+	module A
+  	  def A.included(args)
+    		puts "#{args}"
+  	  end	
+	end
+
+	class B
+	  include A
+	end
+	#=>B
+	===========================================================================
+	(3)Module#extend_object
+	===========================================================================
+	module A
+	  def A.extend_object(arg1)
+	    puts "#{arg1}"
+	  end
+	end
+
+	class B
+	  extend A
+	end
+	#=>B
+	===========================================================================
+	(4)Module#method_added(Module#method_removed或Module#method_undefined)
+	module A
+	    def A.method_added(arg1)
+	      puts "#{arg1}"
+	    end
+	    def fun
+	    end 
+	end
+	#=>fun
+
+	module A
+	    def A.method_added(arg1)
+	      puts "#{arg1}"
+	    end
+	    def fun
+	    end 
+	    remove_method :fun
+	end
+	#=>fun
+
+	module A
+	    def A.method_added(arg1)
+	      puts "#{arg1}"
+	    end
+	    def fun
+	    end 
+	    undef_method :fun
+	end
+	#=>fun
+	===========================================================================
+	(5)BasicObject#singleton_method_added(BasicObject#singleton_method_remove或
+	BasicObject#singleton_method_undefined)
